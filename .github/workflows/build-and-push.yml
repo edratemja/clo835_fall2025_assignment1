@@ -1,20 +1,23 @@
 name: Build and push images to ECR
+
+# Trigger on push or PR to main branch
 on:
-  pull_request:
-    branches: [ master ]
   push:
-    branches: [ master ]
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+
     env:
       AWS_REGION: us-east-1
       WEB_ECR_REPO: clo835-webapp
       MYSQL_ECR_REPO: clo835-mysql
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Configure AWS credentials
@@ -24,17 +27,17 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Login to ECR
+      - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build and push MySQL image
+      - name: Build and push MySQL Docker image
         run: |
           REG=${{ steps.login-ecr.outputs.registry }}
           docker build -t $REG/${{ env.MYSQL_ECR_REPO }}:${{ github.sha }} -f Dockerfile_mysql .
           docker push $REG/${{ env.MYSQL_ECR_REPO }}:${{ github.sha }}
 
-      - name: Build and push Web app image
+      - name: Build and push Web App Docker image
         run: |
           REG=${{ steps.login-ecr.outputs.registry }}
           docker build -t $REG/${{ env.WEB_ECR_REPO }}:${{ github.sha }} -f Dockerfile .
