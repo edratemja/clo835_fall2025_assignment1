@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: web-rs
+  namespace: web-ns
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: employees
+  template:
+    metadata:
+      labels:
+        app: employees
+    spec:
+      containers:
+        - name: web
+          image: employees-web:1.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DBHOST
+              value: mysql.db-ns.svc.cluster.local
+            - name: DBUSER
+              value: empuser
+            - name: DBPWD
+              value: emppass
+            - name: DATABASE
+              value: employees
+            - name: DBPORT
+              value: "3306"
