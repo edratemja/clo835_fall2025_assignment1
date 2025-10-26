@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: image: 654654194559.dkr.ecr.us-east-1.amazonaws.com/employees-web:1.1
+          image: 654654194559.dkr.ecr.us-east-1.amazonaws.com/employees-web:1.1
           ports:
             - containerPort: 8080
           env:
